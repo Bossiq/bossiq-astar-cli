@@ -21,3 +21,12 @@ if (MSVC)
 else()
   target_compile_options(astar PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+# Simple test hook (used later in CI)
+include(CTest)
+enable_testing()
+add_test(NAME selftest COMMAND astar --selftest)
+
+# (Optional install rules; we’ll use later)
+install(TARGETS astar RUNTIME DESTINATION bin)
+install(DIRECTORY include/ DESTINATION include)
