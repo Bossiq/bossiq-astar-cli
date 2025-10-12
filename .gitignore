@@ -1,0 +1,31 @@
+# Build trees
+/build/
+/out/
+/dist/
+/install/
+
+# Visual Studio
+/.vs/
+*.VC.db
+*.VC.VC.opendb
+
+# CMake (in case someone builds in-tree)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+
+# Binaries & intermediates
+*.obj
+*.pdb
+*.exe
+*.dll
+*.lib
+*.exp
+*.log
+
+# OS misc
+Thumbs.db
+.DS_Store
