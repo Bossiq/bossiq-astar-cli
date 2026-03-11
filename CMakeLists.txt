@@ -6,27 +6,43 @@ project(bossiq-astar-cli
   LANGUAGES CXX
 )
 
-# C++17
+# ── C++17 ─────────────────────────────────────
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Executable target
-add_executable(astar src/main.cpp)
-target_include_directories(astar PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# ── Header-only INTERFACE library ─────────────
+add_library(astar_lib INTERFACE)
+target_include_directories(astar_lib INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
-# Warnings
+# ── CLI executable ────────────────────────────
+add_executable(astar src/main.cpp)
+target_link_libraries(astar PRIVATE astar_lib)
+target_compile_definitions(astar PRIVATE
+  PROJECT_VERSION="${PROJECT_VERSION}"
+)
+
+# ── Compiler warnings ────────────────────────
 if (MSVC)
   target_compile_options(astar PRIVATE /W4 /permissive-)
 else()
   target_compile_options(astar PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-# Simple test hook (used later in CI)
+# ── Testing ───────────────────────────────────
 include(CTest)
 enable_testing()
 add_test(NAME selftest COMMAND astar --selftest)
 
-# (Optional install rules; we’ll use later)
+# ── Install ───────────────────────────────────
 install(TARGETS astar RUNTIME DESTINATION bin)
+install(TARGETS astar_lib EXPORT astarTargets)
 install(DIRECTORY include/ DESTINATION include)
+install(EXPORT astarTargets
+  FILE astarTargets.cmake
+  NAMESPACE astar::
+  DESTINATION lib/cmake/astar
+)
